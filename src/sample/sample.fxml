@@ -14,10 +14,12 @@
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowSpan="2">
          <children>
-            <TextField fx:id="txtfieldMoneyAmount" promptText="\$" />
+            <TextField fx:id="txtfieldMoneyAmount" promptText="\$" text="100" />
             <TextField fx:id="txtfieldRate" editable="false" promptText="rate" />
             <Label fx:id="lblResult" textAlignment="CENTER" />
             <Button mnemonicParsing="false" onAction="#btn1Click" text="Calculate" textAlignment="CENTER" />
+            <ComboBox fx:id="cmbCurrency" onAction="#cmbRateClick" prefWidth="150.0" />
+            <Button fx:id="btnRate" mnemonicParsing="false" onAction="#btnRateClick" text="Rate" />
          </children>
       </VBox>
    </children>

@@ -1,5 +1,8 @@
 package sample;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ComboBox;
 import org.apache.felix.utils.json.JSONParser;
 
 import java.io.BufferedReader;
@@ -11,7 +14,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class getData {
+public class CurrencyLoader {
+
+    public static ArrayList <Currency> currenciesList;
+
     public static String getDataByURI(String url) {
         String data = "";
 
@@ -42,33 +48,47 @@ public class getData {
         return data;
     }
 
-    public static double getRate(String currency) {
-        String result = getDataByURI("https://api.privatbank.ua/p24api/exchange_rates?json&date=11.8.2020");
-        System.out.println(result);
-        JSONParser parser = new JSONParser(result);
-
-        ArrayList exchange = (ArrayList) parser.getParsed().get("exchangeRate");
-
-//        try {
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+    public static double getPurchaseRateNB(String currency) {
         double usd = -1;
-        for (Object t : exchange) {
-            HashMap tempMap = (HashMap) t;
+        for (Currency t : currenciesList) {
             try {
-                if (tempMap.get("currency").equals(currency)) {
-                    usd = (double) tempMap.get("saleRateNB");
-                    return usd;
+                if (t.getCurrency().equals(currency)) {
+                    return t.getPurchaseRateNB();
                 }
             }
             catch (Exception e)
             {
 
             }
+
         }
         return usd;
     }
+
+    public static void loadCurrencies() {
+        String result = getDataByURI("https://api.privatbank.ua/p24api/exchange_rates?json&date=11.8.2020");
+        System.out.println(result);
+        JSONParser parser = new JSONParser(result);
+        currenciesList=new ArrayList<>();
+
+        ArrayList exchange = (ArrayList) parser.getParsed().get("exchangeRate");
+        for (Object t : exchange) {
+            HashMap tempMap = (HashMap) t;
+            try {
+                String currency= (String)tempMap.get("currency");
+                Double saleRateNB = (Double)tempMap.get("saleRateNB");
+                Double purchaseRateNB = (Double)tempMap.get("purchaseRateNB");
+
+                currenciesList.add(new Currency(saleRateNB, purchaseRateNB, currency));
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+        currenciesList.remove(0);
+
+    }
+
 
 }
